@@ -1,6 +1,6 @@
-# metrics_test
+# feature_analysis
 
-metrics_test is a Python library for evaluating features in a binary classification dataset.
+feature_analysis is a Python library for evaluating features in a binary classification dataset.
 
 ## Installation
 
