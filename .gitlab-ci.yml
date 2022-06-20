@@ -6,7 +6,7 @@ stages:
 #------------ Security & Code Quality Scans ------------#
 
 include:
-  - project: 'imda_dsl/ai-shopfloor/greenphyto/auto-feature-eng'
+  - project: 'imda_dsl/software-project-templates/gitlab-ci-templates'
     file: 'ai-security-scan-template.yml'
 
 
