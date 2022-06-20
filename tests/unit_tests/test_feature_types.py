@@ -1,9 +1,7 @@
-from operator import mod
+import pandas as pd
 import pytest
 
 import feature_types
-from feature_types import *
-
 
 C = ["Location",
      "WindGustDir",
@@ -94,51 +92,66 @@ PSI2 = [0.014696120427005202,
         0.10721353041886722,
         0.0005935084511908906]
 
-@pytest.mark.parametrize(["column", "type1", "type2"], [("Location", "C", "C"),
-                                                        ("MinTemp", "NC", "NC"),
-                                                        ("WindSpeed9am", "NC", "NC"),
-                                                        ("Date", "DC", "DC"),
-                                                        ("Cloud9am", "NC", "N")])
+
+@pytest.mark.parametrize(["column", "type1", "type2"],
+                         [("Location", "C", "C"),
+                          ("MinTemp", "NC", "NC"),
+                          ("WindSpeed9am", "NC", "NC"),
+                          ("Date", "DC", "DC"),
+                          ("Cloud9am", "NC", "N")])
 def test_data_type(og_df, column, type1, type2):
-    assert data_type(og_df, column) == type1
-    assert data_type(og_df, column, 10) == type2
+    assert feature_types.data_type(og_df, column) == type1
+    assert feature_types.data_type(og_df, column, 10) == type2
 
 
-@pytest.mark.parametrize(["type", "list"], [("C", C),
-                                            ("NC", NC),
-                                            ("N", []),
-                                            ("DC", ["Date"]),
-                                            ("D", [])])
+@pytest.mark.parametrize(["type", "list"],
+                         [("C", C),
+                          ("NC", NC),
+                          ("N", []),
+                          ("DC", ["Date"]),
+                          ("D", [])])
 def test_find_type(og_df, type, list):
-    assert find_type(og_df, type) == list
+    assert feature_types.find_type(og_df, type) == list
 
 
 def test_labelled_df(label_df, modified_df):
+    new_label_df = feature_types.labelled_df(modified_df)
     assert pd.testing.assert_frame_equal(label_df,
-                                         labelled_df(modified_df),
+                                         new_label_df,
                                          check_dtype=False) is None
 
 
 def test_cont_to_cat(contocat_df, modified_df):
+    new_contocat_df = feature_types.cont_to_cat(modified_df, fillNA=True)
     assert pd.testing.assert_frame_equal(contocat_df,
-                                         cont_to_cat(modified_df, fillNA=True),
+                                         new_contocat_df,
                                          check_dtype=False) is None
 
 
 def test_find_missing(modified_df):
-    assert find_missing(modified_df) == MISSING
+    assert feature_types.find_missing(modified_df) == MISSING
 
 
 def test_fill_missing(modified_df, filled_df):
+    new_filled_df = feature_types.fill_missing(modified_df)
     assert pd.testing.assert_frame_equal(filled_df,
-                                         fill_missing(modified_df),
+                                         new_filled_df,
                                          check_dtype=False) is None
 
 
-@pytest.mark.parametrize(["val1", "val2", "psi"], [("1. Before 2012", "2. After 2012, Before 2015", PSI1), 
-                                                   ("2. After 2012, Before 2015", "3. After 2015", PSI2)])
+@pytest.mark.parametrize(["val1", "val2", "psi"],
+                         [("1. Before 2012",
+                           "2. After 2012, Before 2015",
+                           PSI1),
+                          ("2. After 2012, Before 2015",
+                           "3. After 2015",
+                           PSI2)])
 def test_psi(modified_df, val1, val2, psi):
     df = modified_df
-    new_df = cont_to_cat(df.drop("Date", axis=1), True)
+    new_df = feature_types.cont_to_cat(df.drop("Date", axis=1), True)
     new_df["Date"] = df["Date"]
-    assert list(feature_types.psi(new_df, "RainTomorrow", "Date", val1, val2).psi) == psi
+    assert list(feature_types.psi(new_df,
+                                  "RainTomorrow",
+                                  "Date",
+                                  val1,
+                                  val2).psi) == psi

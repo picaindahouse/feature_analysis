@@ -150,9 +150,14 @@ def cont_to_cat(df, fillNA=False, bins=5):
         new_df = new_df.astype({feature: str})
         if fillNA:
             if feature_type == "NC":
-                new_df[feature] = new_df[feature].apply(lambda x: "-999999999" if x == 'nan' else x)
+                new_df[feature] = new_df[feature].apply(lambda x:
+                                                        "-999999999"
+                                                        if x == 'nan'
+                                                        else x)
             else:
-                new_df[feature] = new_df[feature].apply(lambda x: "NA" if x == 'nan' else x)
+                new_df[feature] = new_df[feature].apply(lambda x:
+                                                        "NA" if x == 'nan'
+                                                        else x)
 
     return new_df
 
@@ -255,14 +260,14 @@ def psi(df, label, date, val1, val2):
 
         b = b.loc[(b["A"] != 0) & (b["B"] != 0)]
 
-        b["A (%)"] = b["A"]/sum(b["A"]) * 100
-        b["B (%)"] = b["B"]/sum(b["B"]) * 100
+        b["A (%)"] = b["A"] / sum(b["A"]) * 100
+        b["B (%)"] = b["B"] / sum(b["B"]) * 100
         b = b.drop(["A", "B"], axis=1)
 
         b["diff"] = b["A (%)"] - b["B (%)"]
-        b["log"] = np.log(b["A (%)"]/b["B (%)"])
+        b["log"] = np.log(b["A (%)"] / b["B (%)"])
 
-        b["psi"] = b["diff"]/100 * b["log"]
+        b["psi"] = b["diff"] / 100 * b["log"]
         psi_values = sum(b["psi"])
         psi_df = pd.concat([psi_df,
                             pd.DataFrame({"Features": [feature],

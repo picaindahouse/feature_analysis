@@ -6,7 +6,7 @@ pd.options.mode.chained_assignment = None
 
 @pytest.fixture
 def og_df():
-    ## Data Preprocessing:
+    # Data Preprocessing:
     weather = pd.read_csv("datasets/weatherAUS.csv")
     weather.Date = pd.to_datetime(weather.Date)
     return weather
@@ -14,15 +14,16 @@ def og_df():
 
 @pytest.fixture
 def modified_df():
-    ## Data Preprocessing:
+    # Data Preprocessing:
     weather = pd.read_csv("datasets/weatherAUS.csv")
     weather.Date = pd.to_datetime(weather.Date)
-    weather_test = weather.loc[[not x for x in weather["RainTomorrow"].isnull()]]
+    labelled = [not x for x in weather["RainTomorrow"].isnull()]
+    weather_test = weather.loc[labelled]
 
     def transform_date(x):
-        if x < datetime.datetime(2012, 1, 1): 
+        if x < datetime.datetime(2012, 1, 1):
             return "1. Before 2012"
-        elif x < datetime.datetime(2015, 1, 1): 
+        elif x < datetime.datetime(2015, 1, 1):
             return "2. After 2012, Before 2015"
         else:
             return "3. After 2015"
@@ -43,7 +44,9 @@ def contocat_df():
 
 @pytest.fixture
 def filled_df():
-    return pd.read_csv("datasets/filledDf.csv", index_col=0, keep_default_na=False)
+    return pd.read_csv("datasets/filledDf.csv",
+                       index_col=0,
+                       keep_default_na=False)
 
 
 @pytest.fixture
@@ -58,9 +61,14 @@ def stability_df():
 
 @pytest.fixture
 def total_df():
-    return pd.read_excel("datasets/report.xlsx", sheet_name="Total", keep_default_na=False)
+    return pd.read_excel("datasets/report.xlsx",
+                         sheet_name="Total",
+                         keep_default_na=False)
 
 
 @pytest.fixture
 def bad_df():
-    return pd.read_excel("datasets/report.xlsx", sheet_name="Bad Rate", keep_default_na=False, na_values="")
+    return pd.read_excel("datasets/report.xlsx",
+                         sheet_name="Bad Rate",
+                         keep_default_na=False,
+                         na_values="")

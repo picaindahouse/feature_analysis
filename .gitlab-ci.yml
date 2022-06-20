@@ -1,0 +1,34 @@
+stages:
+  - test
+
+
+
+#------------ Security & Code Quality Scans ------------#
+
+include:
+  - project: 'imda_dsl/ai-shopfloor/greenphyto/auto-feature-eng'
+    file: 'ai-security-scan-template.yml'
+
+
+
+#------------ Pytest ------------#
+
+.unit-tests:
+  stage: test
+  image: "python:3.8"
+  before_script:
+    - pip install tox
+  script:
+    - tox -e unit
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+  rules:
+    - if: '$CI_COMMIT_BRANCH || $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - src/*.py
+        - src/**/*.py
+        - tox.ini
+        - .gitlab-ci.yml
+        - tests/unit_tests
