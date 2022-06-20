@@ -13,7 +13,7 @@ include:
 
 #------------ Pytest ------------#
 
-.unit-tests:
+unit-tests:
   stage: test
   image: "python:3.8"
   before_script:
