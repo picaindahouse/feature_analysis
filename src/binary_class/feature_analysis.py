@@ -3,7 +3,7 @@ import pandas as pd
 from toad.metrics import KS, AUC
 from tqdm.auto import tqdm
 
-import feature_types
+import .feature_types
 
 
 # For binary classification only (at least for now)
