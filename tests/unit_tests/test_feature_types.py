@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-import feature_types
+from binary_class import feature_types
 
 C = ["Location",
      "WindGustDir",

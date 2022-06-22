@@ -1,6 +1,6 @@
 import pandas as pd
 
-from feature_analysis import feature_analysis
+from binary_class import feature_analysis
 
 MISSING = [[0, 637, 322, 1406, 60843,
             67816, 9330, 9270, 10013,
