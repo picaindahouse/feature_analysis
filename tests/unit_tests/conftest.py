@@ -7,7 +7,7 @@ pd.options.mode.chained_assignment = None
 @pytest.fixture
 def og_df():
     # Data Preprocessing:
-    weather = pd.read_csv("datasets/weatherAUS.csv")
+    weather = pd.read_csv("datasets/weatherAUS.csv", index_col=0)
     weather.Date = pd.to_datetime(weather.Date)
     return weather
 
@@ -15,7 +15,7 @@ def og_df():
 @pytest.fixture
 def modified_df():
     # Data Preprocessing:
-    weather = pd.read_csv("datasets/weatherAUS.csv")
+    weather = pd.read_csv("datasets/weatherAUS.csv", index_col=0)
     weather.Date = pd.to_datetime(weather.Date)
     labelled = [not x for x in weather["RainTomorrow"].isnull()]
     weather_test = weather.loc[labelled]
