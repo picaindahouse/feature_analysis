@@ -156,7 +156,8 @@ def cont_to_cat(df, fillNA=False, bins=5):
                                                         else x)
             else:
                 new_df[feature] = new_df[feature].apply(lambda x:
-                                                        "NA" if x == 'nan'
+                                                        "NA"
+                                                        if x == 'nan'
                                                         else x)
 
     return new_df
@@ -214,6 +215,8 @@ def fill_missing(df, strat=None):
         feature_type = data_type(df, feature)
         if feature_type in ["N", "NC"]:
             new_df[feature] = new_df[feature].fillna(-999999999)
+        elif feature_type in ["D", "DC"]:
+            new_df[feature] = new_df[feature].fillna(np.datetime64('NaT'))
         else:
             new_df[feature] = new_df[feature].fillna("NA")
     return new_df

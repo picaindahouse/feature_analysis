@@ -72,3 +72,9 @@ def bad_df():
                          sheet_name="Bad Rate",
                          keep_default_na=False,
                          na_values="")
+
+
+@pytest.fixture
+def binned_date_df():
+    return pd.read_csv("datasets/binned_date_df.csv",
+                       index_col=0)

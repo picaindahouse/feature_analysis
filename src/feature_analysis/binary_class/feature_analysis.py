@@ -206,6 +206,10 @@ class feature_analysis:
 
         if on_bin:
             df = feature_types.cont_to_cat(df, self.label)
+        else:
+            dates = feature_types.find_type(df, ["D", "DC"])
+            for date in dates:
+                df[date] = [str(x) if x == x else "NA" for x in df[date]]
 
         df = feature_types.fill_missing(df)
         df = feature_types.labelled_df(df)
@@ -296,7 +300,7 @@ class feature_analysis:
             return iv
         return trend_df
 
-    def stability(self, bins=5):
+    def stability(self, bin_dates, bins=5):
         """
         Calculate the psi of each feature in a DataFrame over
         the different bins in date feature.
@@ -306,6 +310,9 @@ class feature_analysis:
         self : Instance
                 Current instance of feature_anaylsis
                 class
+
+        bin_dates: boolean
+                   True if want to bin dates else false
 
         bins : int, optional
                Maximum number of bins each feature should have
@@ -319,9 +326,13 @@ class feature_analysis:
         if self.date is None:
             return "No date column given"
         # Turn continuous variables categorical
-        new_df = feature_types.cont_to_cat(self.df.drop(self.date,
-                                                        axis=1), True, bins)
-        new_df[self.date] = self.df[self.date]
+        if not bin_dates:
+            new_df = feature_types.cont_to_cat(self.df.drop(self.date, axis=1),
+                                               True,
+                                               bins)
+            new_df[self.date] = self.df[self.date]
+        else:
+            new_df = feature_types.cont_to_cat(self.df, True, bins)
 
         # Find the dates we are grouping the data into
         dates = sorted(list(new_df[self.date].unique()))
@@ -349,7 +360,7 @@ class feature_analysis:
 
         return stability_df
 
-    def total(self, bins=5):
+    def total(self, bin_dates, bins=5):
         """
         Find the total number of occurences of each bin for each
         feature in a DataFrame over the bins in date column.
@@ -359,6 +370,9 @@ class feature_analysis:
         self : Instance
                 Current instance of feature_anaylsis
                 class
+
+        bin_dates: boolean
+                   True if want to bin dates else false
 
         bins : int, optional
                Maximum number of bins each feature should have
@@ -374,10 +388,15 @@ class feature_analysis:
             return "No date column given"
 
         # Turn continuous variables categorical
-        new_df = feature_types.cont_to_cat(self.df.drop(self.date,
-                                                        axis=1), True, bins)
+        if not bin_dates:
+            new_df = feature_types.cont_to_cat(self.df.drop(self.date, axis=1),
+                                               True,
+                                               bins)
+            new_df[self.date] = self.df[self.date]
+        else:
+            new_df = feature_types.cont_to_cat(self.df, True, bins)
+
         new_df = feature_types.fill_missing(new_df)
-        new_df[self.date] = self.df[self.date]
 
         total_df = pd.DataFrame()
         cols = self.df.columns
@@ -394,7 +413,7 @@ class feature_analysis:
 
             d.insert(loc=0, column="Variable", value=feature)
 
-            if feature_types.data_type(self.df, feature) in ["NC", "DC"]:
+            if feature_types.data_type(self.df, feature) in ["NC"]:
                 d = d.sort_values(by=["Bin"],
                                   key=lambda x:
                                   ([float(a.split(",")[0][1:]) for a in x]))
@@ -403,7 +422,7 @@ class feature_analysis:
             total_df = pd.concat([total_df, d])
         return total_df
 
-    def bad_rate(self, bins=5):
+    def bad_rate(self, bin_dates, bins=5):
         """
         Find the ratio of "bad" in each bin for each feature
         in a DataFrame over the bins in date column.
@@ -413,6 +432,9 @@ class feature_analysis:
         self : Instance
                 Current instance of feature_anaylsis
                 class
+
+        bin_dates: boolean
+                   True if want to bin dates else false
 
         bins : int, optional
                Maximum number of bins each feature should have
@@ -424,10 +446,18 @@ class feature_analysis:
                 of "bad" in each feature in df during each
                 date bin.
         """
-        new_df = feature_types.cont_to_cat(self.df.drop(self.date,
-                                                        axis=1), True, bins)
+        if self.date is None:
+            return "No date column given"
+
+        if not bin_dates:
+            new_df = feature_types.cont_to_cat(self.df.drop(self.date, axis=1),
+                                               True,
+                                               bins)
+            new_df[self.date] = self.df[self.date]
+        else:
+            new_df = feature_types.cont_to_cat(self.df, True, bins)
+
         new_df = feature_types.fill_missing(new_df)
-        new_df[self.date] = self.df[self.date]
 
         bad_df = pd.DataFrame()
         cols = self.df.columns
@@ -436,7 +466,7 @@ class feature_analysis:
             d0_total = pd.get_dummies(new_df[[feature, self.date]],
                                       columns=[self.date])
             d_total = d0_total.groupby(feature, as_index=False).sum()
-            dates = sorted(list(self.df[self.date].unique()))
+            dates = sorted(list(new_df[self.date].unique()))
             d_total.columns = ["Bin"] + dates
 
             fil_df = new_df[[feature, self.date]].loc[new_df[self.label] == 1]
@@ -461,7 +491,7 @@ class feature_analysis:
 
             d.insert(loc=0, column='Variable', value=feature)
 
-            if feature_types.data_type(self.df, feature) in ["NC", "DC"]:
+            if feature_types.data_type(self.df, feature) in ["NC"]:
                 d = d.sort_values(by=["Bin"],
                                   key=lambda x:
                                   ([float(a.split(",")[0][1:]) for a in x]))
@@ -470,7 +500,7 @@ class feature_analysis:
             bad_df = pd.concat([bad_df, d])
         return bad_df
 
-    def to_excel(self, filename='report.xlsx', on_bin=False, bins=5):
+    def to_excel(self, bin_dates, name='report.xlsx', on_bin=False, bins=5):
         """
         Saves an excelsheet with all the dataframes available
         in overall having 1 worksheet to themselves.
@@ -481,7 +511,10 @@ class feature_analysis:
                 Current instance of feature_anaylsis
                 class
 
-        filename: String, optional
+        bin_dates: boolean
+                   True if want to bin dates else false
+
+        name: String, optional
                 Name of excelsheet saved
 
         on_bin : Boolean, optional
@@ -510,20 +543,20 @@ class feature_analysis:
                     break
 
                 elif x == 3:
-                    df3 = self.stability(bins)
+                    df3 = self.stability(bin_dates, bins)
 
                 elif x == 4:
-                    df4 = self.total(bins)
+                    df4 = self.total(bin_dates, bins)
 
                 else:
                     dfs = {"Analysis": df1,
                            "IV Scores": df2,
                            "Stability": df3,
                            "Total": df4,
-                           "Bad Rate": self.bad_rate(bins)}
+                           "Bad Rate": self.bad_rate(bin_dates, bins)}
 
         # Create a Pandas Excel writer using XlsxWriter as the engine.
-        writer = pd.ExcelWriter(filename, engine='xlsxwriter')
+        writer = pd.ExcelWriter(name, engine='xlsxwriter')
 
         for sheetname, df_n in dfs.items():
             df_n.to_excel(writer, sheet_name=sheetname, index=False)

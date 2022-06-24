@@ -63,7 +63,7 @@ def test_stability(modified_df, stability_df):
                                  "Date",
                                  bad_class="Yes")
     assert pd.testing.assert_frame_equal(stability_df,
-                                         fa_object.stability(),
+                                         fa_object.stability(False),
                                          check_dtype=False) is None
 
 
@@ -72,7 +72,7 @@ def test_total(modified_df, total_df):
                                  "RainTomorrow",
                                  "Date",
                                  bad_class="Yes")
-    new_total_df = fa_object.total().reset_index(drop=True)
+    new_total_df = fa_object.total(False).reset_index(drop=True)
     assert pd.testing.assert_frame_equal(total_df,
                                          new_total_df,
                                          check_dtype=False,
@@ -84,8 +84,20 @@ def test_bad_rate(modified_df, bad_df):
                                  "RainTomorrow",
                                  "Date",
                                  bad_class="Yes")
-    new_bad_df = fa_object.bad_rate().reset_index(drop=True)
+    new_bad_df = fa_object.bad_rate(False).reset_index(drop=True)
     assert pd.testing.assert_frame_equal(bad_df,
                                          new_bad_df,
+                                         check_dtype=False,
+                                         check_names=False) is None
+
+
+def test_date_binned(og_df, binned_date_df):
+    fa_object = feature_analysis(og_df,
+                                 "RainTomorrow",
+                                 "Date",
+                                 bad_class="Yes")
+    new_binned_date_df = fa_object.stability(True)
+    assert pd.testing.assert_frame_equal(binned_date_df,
+                                         new_binned_date_df,
                                          check_dtype=False,
                                          check_names=False) is None
