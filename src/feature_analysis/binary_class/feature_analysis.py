@@ -258,10 +258,11 @@ class feature_analysis:
             If output = "IV", returns the IV score of
             each feature instead.
         """
+        df = self.df.copy()
         if self.date is not None:
-            df = self.df.drop(self.date, axis=1)
+            df = df.drop(self.date, axis=1)    
         if self.to_drop is not None:
-            df = self.df.drop(self.to_drop, axis=1)
+            df = df.drop(self.to_drop, axis=1)
         df = feature_types.cont_to_cat(df, True, bins)
         df = feature_types.fill_missing(df, None)
 
