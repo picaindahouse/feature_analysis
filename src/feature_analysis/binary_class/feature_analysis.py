@@ -260,7 +260,7 @@ class feature_analysis:
         """
         df = self.df.copy()
         if self.date is not None:
-            df = df.drop(self.date, axis=1)    
+            df = df.drop(self.date, axis=1)
         if self.to_drop is not None:
             df = df.drop(self.to_drop, axis=1)
         df = feature_types.cont_to_cat(df, True, bins)
