@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: feature-analysis-karsh
+Version: 0.0.1
+Summary: Package to help with feature analysis
+Home-page: https://github.com/picaindahouse/metrics_test
+Author: Utkarsh
+Author-email: utkarshboom77@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # feature_analysis
 
 feature_analysis is a Python library for evaluating features to be used in a model.
@@ -7,7 +21,7 @@ feature_analysis is a Python library for evaluating features to be used in a mod
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ```bash
-pip install -i https://test.pypi.org/simple/ feature-analysis-karsh==0.0.1
+pip install -i https://test.pypi.org/simple/ metrics-test-karsh==0.0.8
 ```
 
 ## Usage
