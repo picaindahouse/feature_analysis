@@ -79,6 +79,17 @@ report.stability(True)
 ```python
 report.stability(name="report2.xlsx")
 ```
+
+## Note
+1) Missing Values
+- Missing values in Binary Classification are default dealt in the following way:
+- Constants: "NA"
+- Numerical: -999999999  
+  
+- Missing values in Regression are default dealt in the following way:
+- Constants: "NA"
+- Numerical: Mean value of Column
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
