@@ -1,6 +1,3 @@
-import sys
-from os.path import dirname, join, normpath
-
-THIS_DIR = dirname(__file__)
-PROJ_DIR = normpath(join(THIS_DIR, "..", "binary_class"))
-sys.path.append(PROJ_DIR)
+from . import pathway
+from .reg_analysis import reg_analysis
+__all__ = ['pathway', 'reg_analysis', ]

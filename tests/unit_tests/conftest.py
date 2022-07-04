@@ -78,3 +78,20 @@ def bad_df():
 def binned_date_df():
     return pd.read_csv("datasets/binned_date_df.csv",
                        index_col=0)
+
+
+@pytest.fixture
+def reg_df():
+    weather = pd.read_csv("datasets/weatherAUS.csv", index_col=0)
+    weather.Date = pd.to_datetime(weather.Date)
+    return weather.loc[[not x for x in weather.MaxTemp.isnull()]]
+
+
+@pytest.fixture
+def reg_analysis_df():
+    return pd.read_csv("datasets/reg_analysis.csv")
+
+
+@pytest.fixture
+def reg_stable_df():
+    return pd.read_csv("datasets/reg_stable.csv")

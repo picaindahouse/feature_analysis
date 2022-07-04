@@ -7,6 +7,8 @@ src/feature_analysis/binary_class/__init__.py
 src/feature_analysis/binary_class/feature_analysis.py
 src/feature_analysis/binary_class/feature_types.py
 src/feature_analysis/regression/__init__.py
+src/feature_analysis/regression/pathway.py
+src/feature_analysis/regression/reg_analysis.py
 src/feature_analysis_karsh.egg-info/PKG-INFO
 src/feature_analysis_karsh.egg-info/SOURCES.txt
 src/feature_analysis_karsh.egg-info/dependency_links.txt

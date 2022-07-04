@@ -207,8 +207,18 @@ def fill_missing(df, strat=None):
     """
     if strat is not None:
         imp = SimpleImputer(strategy=strat)
-        return pd.DataFrame(imp.fit_transform(df),
-                            columns=df.columns)
+        if strat != "mean":
+            return pd.DataFrame(imp.fit_transform(df),
+                                columns=df.columns)
+        else:
+            new_df = df.copy()
+            num_features = find_type(new_df, ["NC", "N"])
+            missing_features = find_missing(new_df)
+            num_missing = [x for x in num_features if x in missing_features]
+            temp_df = new_df[num_missing]
+            temp_df.fillna(temp_df.mean(), inplace=True)
+            new_df[num_missing] = temp_df
+            df = new_df
 
     new_df = df.copy()
     for feature in find_missing(df):
