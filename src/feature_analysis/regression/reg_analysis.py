@@ -5,7 +5,7 @@ from scipy.stats import kendalltau
 import numpy as np
 import pandas as pd
 
-from binary_class import feature_types
+from binary_classification import feature_types
 
 pd.options.mode.chained_assignment = None
 
@@ -227,7 +227,7 @@ class reg_analysis:
             kendalls.append(kendalltau(df[column], self.y)[0])
         return kendalls
 
-    def analyse(self, sort=None, on_bin=False):
+    def analyse(self, sort_column=None, on_bin=False):
         """
         Correlation analysis for the features in a DataFrame
 
@@ -292,8 +292,8 @@ class reg_analysis:
                                     "|Kendall's Corr|": abs_kendall,
                                     "Anova F": self.anova_F_score(df)})
 
-        if sort is not None:
-            return analysis_df.sort_values(by=sort, ascending=False)
+        if sort_column is not None:
+            return analysis_df.sort_values(by=sort_column, ascending=False)
         return analysis_df
 
     def stability(self, bin_dates, bins=5):

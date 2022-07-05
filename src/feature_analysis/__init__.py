@@ -1,3 +1,3 @@
-from . import binary_class
+from . import binary_classification
 from . import regression
-__all__ = ['binary_class', 'regression', ]
+__all__ = ['binary_classification', 'regression', ]
