@@ -1,6 +1,6 @@
 import pandas as pd
 
-from multi_classification import multi_analysis
+from multi_classification import feature_analysis
 
 DATA_TYPES = ['DateTime', 'Categorical', 'Numerical',
               'Numerical', 'Numerical', 'Numerical',
@@ -26,29 +26,29 @@ ZERO = [[0, 0, 0, 0, 289, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 
 
 def test_data_types(multi_df):
-    report = multi_analysis(multi_df, "WindDir9am")
+    report = feature_analysis(multi_df, "WindDir9am")
     assert report.data_types() == DATA_TYPES
 
 
 def test_missing_rate(multi_df):
-    report = multi_analysis(multi_df, "WindDir9am")
+    report = feature_analysis(multi_df, "WindDir9am")
     assert report.missing_rate(False) == MISSING
 
 
 def test_zero_rate(multi_df):
-    report = multi_analysis(multi_df, "WindDir9am")
+    report = feature_analysis(multi_df, "WindDir9am")
     assert report.zero_rate(False) == ZERO
 
 
 def test_analysis(multi_df, multi_analysis_df):
-    report = multi_analysis(multi_df, "WindDir9am", "Date")
-    new_analysis_df = report.analyse().drop("Mutual Info", axis=1)
+    report = feature_analysis(multi_df, "WindDir9am", "Date")
+    new_analysis_df = report.analysis().drop("Mutual Info", axis=1)
     assert pd.testing.assert_frame_equal(new_analysis_df,
                                          multi_analysis_df) is None
 
 
 def test_stability(multi_df, multi_stable_df):
-    report = multi_analysis(multi_df, "WindDir9am", "Date")
+    report = feature_analysis(multi_df, "WindDir9am", "Date")
     new_stable_df = report.stability(True)
     assert pd.testing.assert_frame_equal(new_stable_df,
                                          multi_stable_df) is None

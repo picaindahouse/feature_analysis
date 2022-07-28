@@ -4,13 +4,14 @@ from scipy.stats import spearmanr
 from scipy.stats import kendalltau
 import numpy as np
 import pandas as pd
+from tqdm.auto import tqdm
 
 from binary_classification import feature_types
 
 pd.options.mode.chained_assignment = None
 
 
-class reg_analysis:
+class feature_analysis:
     def __init__(self, df, label, date=None, to_drop=None):
         self.df = df.copy()
         self.label = label
@@ -227,7 +228,7 @@ class reg_analysis:
             kendalls.append(kendalltau(df[column], self.y)[0])
         return kendalls
 
-    def analyse(self, sort_column=None, on_bin=False):
+    def analysis(self, sort_column=None, on_bin=False):
         """
         Correlation analysis for the features in a DataFrame
 
@@ -356,3 +357,63 @@ class reg_analysis:
             stability_df[dates[x]] = [round(x, 5) for x in psi_values]
 
         return stability_df
+
+    def to_excel(self, bin_dates, name='report.xlsx', on_bin=False, bins=5):
+        """
+        Saves an excelsheet with all the dataframes available
+        in overall having 1 worksheet to themselves.
+
+        Parameters
+        ----------
+        self : Instance
+                Current instance of feature_anaylsis
+                class
+
+        bin_dates: boolean
+                   True if want to bin dates else false
+
+        name: String, optional
+                Name of excelsheet saved
+
+        on_bin : Boolean, optional
+                Whether to find AUC/KS score on
+                binned or continuous values of the
+                continuous features in df
+
+        bins : int, optional
+            Maximum number of bins each feature should have
+
+        Saves
+        -------
+        Xslx : xslx file
+            Excel file containing all the dataframes from
+            overall.
+        """
+        for x in tqdm(range(1, 3)):
+            if x == 1:
+                df1 = self.analysis(on_bin=on_bin)
+
+            else:
+                if self.date is None:
+                    dfs = {"Analysis": df1}
+                    break
+
+                else:
+                    df2 = self.stability(bin_dates, bins)
+                    dfs = {"Analysis": df1,
+                           "Stability": df2}
+
+        # Create a Pandas Excel writer using XlsxWriter as the engine.
+        writer = pd.ExcelWriter(name, engine='xlsxwriter')
+
+        for sheetname, df_n in dfs.items():
+            df_n.to_excel(writer, sheet_name=sheetname, index=False)
+            worksheet = writer.sheets[sheetname]
+            for idx, col in enumerate(df_n):
+                series = df_n[col]
+                max_len = max((series.astype(str).map(len).max(),
+                               len(str(series.name)))) + 1
+                worksheet.set_column(idx, idx, max_len)
+
+        # Close the Pandas Excel writer and output the Excel file.
+        writer.save()
