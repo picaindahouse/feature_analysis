@@ -1,6 +1,6 @@
 import pandas as pd
 
-from regression import reg_analysis
+from regression import feature_analysis
 
 DATA_TYPES = ['DateTime', 'Categorical', 'Numerical',
               'Numerical', 'Numerical', 'Numerical',
@@ -26,29 +26,29 @@ ZERO = [[0, 0, 0, 309, 0, 10, 0, 0, 0, 0, 25, 1, 0, 0,
 
 
 def test_data_types(reg_df):
-    report = reg_analysis(reg_df, "MaxTemp")
+    report = feature_analysis(reg_df, "MaxTemp")
     assert report.data_types() == DATA_TYPES
 
 
 def test_missing_rate(reg_df):
-    report = reg_analysis(reg_df, "MaxTemp")
+    report = feature_analysis(reg_df, "MaxTemp")
     assert report.missing_rate(False) == MISSING
 
 
 def test_zero_rate(reg_df):
-    report = reg_analysis(reg_df, "MaxTemp")
+    report = feature_analysis(reg_df, "MaxTemp")
     assert report.zero_rate(False) == ZERO
 
 
 def test_analysis(reg_df, reg_analysis_df):
-    report = reg_analysis(reg_df, "MaxTemp", "Date")
-    new_analysis_df = report.analyse()
+    report = feature_analysis(reg_df, "MaxTemp", "Date")
+    new_analysis_df = report.analysis()
     assert pd.testing.assert_frame_equal(new_analysis_df,
                                          reg_analysis_df) is None
 
 
 def test_stability(reg_df, reg_stable_df):
-    report = reg_analysis(reg_df, "MaxTemp", "Date")
+    report = feature_analysis(reg_df, "MaxTemp", "Date")
     new_stable_df = report.stability(True)
     assert pd.testing.assert_frame_equal(new_stable_df,
                                          reg_stable_df) is None

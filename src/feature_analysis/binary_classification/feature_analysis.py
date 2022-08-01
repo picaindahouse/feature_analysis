@@ -170,7 +170,7 @@ class feature_analysis:
             return pd.DataFrame({"KS (%)": ks}, index=df.columns)
         return ks
 
-    def analysis(self, sort=None, on_bin=False):
+    def analysis(self, sort_column=None, on_bin=False):
         """
         Analyse the features of a DataFrame
 
@@ -223,8 +223,8 @@ class feature_analysis:
                                     "KS (%)": self.ks_scores(df, False),
                                     "IV": self.iv_scores("IV")})
 
-        if sort is not None:
-            return analysis_df.sort_values(by=sort, ascending=False)
+        if sort_column is not None:
+            return analysis_df.sort_values(by=sort_column, ascending=False)
         return analysis_df
 
     def iv_scores(self, output="DF", bins=5):

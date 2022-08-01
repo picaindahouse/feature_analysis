@@ -1,6 +1,6 @@
 import pandas as pd
 
-from binary_class import feature_analysis
+from binary_classification import feature_analysis
 
 MISSING = [[0, 2, 0, 5, 224, 235, 30, 30, 31, 12, 6, 11,
             6, 9, 43, 43, 196, 200, 4, 8, 5],

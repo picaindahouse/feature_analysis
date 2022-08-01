@@ -7,7 +7,7 @@ feature_analysis is a Python library for evaluating features to be used in a mod
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ```bash
-pip install -i https://test.pypi.org/simple/ feature-analysis-karsh==0.0.1
+pip install -i https://test.pypi.org/simple/ feature-analysis-karsh==0.0.10
 ```
 
 ## Usage

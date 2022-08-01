@@ -1,3 +1,3 @@
 from . import pathway
-from .reg_analysis import feature_analysis
+from .multi_analysis import feature_analysis
 __all__ = ['pathway', 'feature_analysis', ]

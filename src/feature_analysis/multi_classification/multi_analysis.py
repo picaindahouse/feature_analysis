@@ -1,6 +1,6 @@
-from sklearn.feature_selection import r_regression
 from sklearn.feature_selection import f_classif
-from scipy.stats import spearmanr
+from sklearn.feature_selection import chi2
+from sklearn.feature_selection import mutual_info_classif
 from scipy.stats import kendalltau
 import numpy as np
 import pandas as pd
@@ -119,66 +119,6 @@ class feature_analysis:
         return [zero["Zero Count"].tolist(),
                 zero["Zero Rate (%)"].tolist()]
 
-    def pearsons(self, df, frames=True):
-        """
-        Compute the Pearson's Correlation.
-
-        This function computes the Pearson's Correlation
-        of each feature in a dataframe.
-
-        Parameters
-        ----------
-        self : Instance
-               Current instance of feature_anaylsis
-               class
-
-        frame : Boolean, optional
-                Whether to return a DataFrame
-
-        Returns
-        -------
-        scores : dataframe or list
-                dataframe of Pearson's Correlation for each feature or
-                list of Pearson's Correlation for each feature
-        """
-        corr = r_regression(df, self.y)
-        if not frames:
-            return [corr, abs(corr)]
-        return pd.DataFrame({"Pearson's Corr": corr,
-                            "|Pearson's Corr|": abs(corr)},
-                            index=df.columns)
-
-    def spearmans(self, df, frames=True):
-        """
-        Compute the Spearman's Correlation.
-
-        This function computes the Spearman's Correlation
-        of each feature in a dataframe.
-
-        Parameters
-        ----------
-        self : Instance
-               Current instance of feature_anaylsis
-               class
-
-        frame : Boolean, optional
-                Whether to return a DataFrame
-
-        Returns
-        -------
-        scores : dataframe or list
-                dataframe of Spearman's Correlation for each feature or
-                list of Spearman's Correlation for each feature
-        """
-        corr = []
-        for column in df.columns:
-            corr.append(spearmanr(df[column], self.y)[0])
-        if not frames:
-            return [corr, [abs(x) for x in corr]]
-        return pd.DataFrame({"Spearman's Corr": corr,
-                            "|Spearman's Corr|": [abs(x) for x in corr]},
-                            index=df.columns)
-
     def anova_F_score(self, df):
         """
         Compute the Anova F Score.
@@ -228,6 +168,68 @@ class feature_analysis:
             kendalls.append(kendalltau(df[column], self.y)[0])
         return kendalls
 
+    def chi_score(self, df):
+        """
+        Compute the Chi Statistic.
+
+        This function computes the Chi Statistic
+        of each feature in a dataframe in relation
+        to label.
+
+        Parameters
+        ----------
+        self : Instance
+               Current instance of feature_anaylsis
+               class
+
+        df : Dataframe
+
+        Returns
+        -------
+        scores : list
+                list of Chi Statistic for each feature
+        """
+        chi = []
+        for x in df.columns:
+            if feature_types.data_type(df, x) in ["DC", "D"] or sum(df[x] < 0):
+                new_df = feature_types.cont_to_cat(df[[x]])
+                new_df = feature_types.labelled_df(new_df)
+                chi.append(chi2(new_df, self.y)[0][0])
+            else:
+                chi.append(chi2(df[[x]], self.y)[0][0])
+        return chi
+
+    def mutual_info(self, df):
+        """
+        Compute the Mutual Info.
+
+        This function computes the Mutual Info
+        of each feature in a dataframe in relation
+        to label.
+
+        Parameters
+        ----------
+        self : Instance
+               Current instance of feature_anaylsis
+               class
+
+        df : Dataframe
+
+        Returns
+        -------
+        scores : list
+                list of Mutual Info for each feature
+        """
+        info = []
+        for x in df.columns:
+            if feature_types.data_type(df, x) in ["DC", "D"]:
+                new_df = feature_types.cont_to_cat(df[[x]])
+                new_df = feature_types.labelled_df(new_df)
+                info.append(mutual_info_classif(new_df, self.y)[0])
+            else:
+                info.append(mutual_info_classif(df[[x]], self.y)[0])
+        return info
+
     def analysis(self, sort_column=None, on_bin=False):
         """
         Correlation analysis for the features in a DataFrame
@@ -274,8 +276,6 @@ class feature_analysis:
         df = feature_types.fill_missing(df, "mean")
         df = feature_types.labelled_df(df)
 
-        pearsons = self.pearsons(df, False)
-        spearmans = self.spearmans(df, False)
         kendall_corr = self.kendall(df)
         abs_kendall = [abs(x) for x in kendall_corr]
 
@@ -285,12 +285,10 @@ class feature_analysis:
                                     "Missing Rate (%)": missing[1],
                                     "Zero Count": zero[0],
                                     "Zero Rate (%)": zero[1],
-                                    "Pearson's Corr": pearsons[0],
-                                    "|Pearson's Corr|": pearsons[1],
-                                    "Spearman's Corr": spearmans[0],
-                                    "|Spearman's Corr|": spearmans[1],
                                     "Kendall's Corr": kendall_corr,
                                     "|Kendall's Corr|": abs_kendall,
+                                    "Mutual Info": self.mutual_info(df),
+                                    "Chi-Score": self.chi_score(df),
                                     "Anova F": self.anova_F_score(df)})
 
         if sort_column is not None:

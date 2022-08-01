@@ -95,3 +95,21 @@ def reg_analysis_df():
 @pytest.fixture
 def reg_stable_df():
     return pd.read_csv("datasets/reg_stable.csv")
+
+
+@pytest.fixture
+def multi_df():
+    weather = pd.read_csv("datasets/weatherAUS.csv", index_col=0)
+    weather.Date = pd.to_datetime(weather.Date)
+    return weather.loc[[not x for x in weather.WindDir9am.isnull()]]
+
+
+@pytest.fixture
+def multi_analysis_df():
+    return pd.read_csv("datasets/multi_analysis.csv").drop("Mutual Info",
+                                                           axis=1)
+
+
+@pytest.fixture
+def multi_stable_df():
+    return pd.read_csv("datasets/multi_stable.csv")
